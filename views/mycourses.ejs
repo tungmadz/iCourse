@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>My Courses</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+        <style>
+            body        { padding-top:80px; word-wrap:break-word; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <!-- LOCAL INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3><span class="fa fa-user"></span> My Courses <%=message%></h3>
+                        <% mycourses.forEach(function(mycourse){%>
+                        <p>
+                            <strong>courseName</strong>: <%= JSON.parse(mycourse).courseName %><br>
+                            <strong>professorName</strong>: <%= JSON.parse(mycourse).professorName %><br>
+                            <strong>time</strong>: <%= JSON.parse(mycourse).time %><br>
+                            <strong>room</strong>: <%= JSON.parse(mycourse).room %><br>
+                            <strong>available</strong>: <%= JSON.parse(mycourse).available %><br>
+                            <strong>occupied</strong>: <%= JSON.parse(mycourse).occupied %><br>
+                            <strong>credit</strong>: <%= JSON.parse(mycourse).credit %><br>
+                        </p>
+                        <% });%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

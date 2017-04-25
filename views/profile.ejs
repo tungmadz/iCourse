@@ -22,16 +22,19 @@
                     <div class="well">
                         <h3><span class="fa fa-user"></span> Local</h3>
                         <p>
-                            <strong>id</strong>: <%= user._id %><br>
-                            <strong>email</strong>: <%= user.local.email %><br>
-                            <strong>password</strong>: <%= user.local.password %>
+                            <strong>id</strong>: <%= student.studentID %><br>
+                            <strong>name</strong>: <%= student.studentName %><br>
+                            <strong>birthday</strong>: <%= student.birthday %><br>
+                            <strong>class</strong>: <%= student.class %><br>
+                            <strong>faculty</strong>: <%= student.faculty %><br>                            
                         </p>
                     </div>
                 </div>
             </div>
 
             <div class= "row">
-                <a href="/courses"><button type="submit" class="btn btn-default" name="show">View Courses</button></a>
+                <a href="/courses"><button type="button" class="btn btn-default" name="show">View Courses</button></a>
+                <a href="/mycourses"><button type="button" class="btn btn-default" name="show">View My Courses</button></a>
             </div>
         </div>
     </body>

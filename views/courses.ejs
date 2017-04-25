@@ -1,1 +1,36 @@
-abc
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Course List</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+        <style>
+            body        { padding-top:80px; word-wrap:break-word; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <!-- LOCAL INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3><span class="fa fa-user"></span> Courses</h3>
+                        <% courses.forEach(function(course){%>
+                        <p>
+                            <strong>courseName</strong>: <%= course.courseName %><br>
+                            <strong>professorName</strong>: <%= course.professorName %><br>
+                            <strong>time</strong>: <%= course.time%><br>
+                            <strong>room</strong>: <%= course.room %><br>
+                            <strong>available</strong>: <%= course.available%><br>
+                            <strong>occupied</strong>: <%= course.occupied %><br>
+                            <strong>credit</strong>: <%= course.credit%><br>
+                            <strong>fee</strong>: <%= course.fee%><br>
+                        </p>
+                        <% });%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

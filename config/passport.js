@@ -22,18 +22,18 @@ module.exports = function(passport){
 
     passport.use('local-signup',new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
+        usernameField : 'username',
         passwordField: 'password',
         passReqToCallback: true //allows us to pass back the entire request to the callback
     },
-    function(req,email,password,done){
+    function(req,username,password,done){
         // asynchronous
         // User.findOne wont fire unless data is sent back
         process.nextTick(function(){
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
-            User.findOne({'local.email':email},function(err,user){
+            User.findOne({'username':username},function(err,user){
                 if(err)
                     return done(err);
 
@@ -42,8 +42,8 @@ module.exports = function(passport){
                     return done(null,false,req.flash('signupMessage','That email is already taken.'));
                 }else{
                     var newUser = new User();
-                    newUser.local.email = email;
-                    newUser.local.password = newUser.generateHash(password);
+                    newUser.username = username;
+                    newUser.password = newUser.generateHash(password);
 
                     newUser.save(function(err){
                         if(err)
@@ -56,12 +56,12 @@ module.exports = function(passport){
     }));
 /////////////////////////////////////LOCAL LOGIN/////////////////////////////
     passport.use('local-login',new LocalStrategy({
-        usernameField : 'email',
+        usernameField : 'username',
         passwordField : 'password',
         passReqToCallback: true
     },
-    function(req,email,password,done){
-        User.findOne({'local.email':email},function(err,user){
+    function(req,username,password,done){
+        User.findOne({'username':username},function(err,user){
             if(err)
                 return done(err);
 
