@@ -17,16 +17,21 @@
                     <div class="well">
                         <h3><span class="fa fa-user"></span> Courses</h3>
                         <% courses.forEach(function(course){%>
-                        <p>
-                            <strong>courseName</strong>: <%= course.courseName %><br>
-                            <strong>professorName</strong>: <%= course.professorName %><br>
-                            <strong>time</strong>: <%= course.time%><br>
-                            <strong>room</strong>: <%= course.room %><br>
-                            <strong>available</strong>: <%= course.available%><br>
-                            <strong>occupied</strong>: <%= course.occupied %><br>
-                            <strong>credit</strong>: <%= course.credit%><br>
-                            <strong>fee</strong>: <%= course.fee%><br>
-                        </p>
+                        <form  action="/register" method="post">
+                            <p>
+                                <strong>courseName</strong>: <%= course.courseName %><br>
+                                <strong>professorName</strong>: <%= course.professorName %><br>
+                                <strong>time</strong>: <%= course.time%><br>
+                                <strong>room</strong>: <%= course.room %><br>
+                                <strong>available</strong>: <%= course.available%><br>
+                                <strong>occupied</strong>: <%= course.occupied %><br>
+                                <strong>credit</strong>: <%= course.credit%><br>
+                                <strong>fee</strong>: <%= course.fee%><br>
+                            </p>
+                            <input type="hidden" name="courseID" value="<%=course.courseID%>">
+                            <input type="submit" class="btn btn-warning" name="register" value="Register"><br>
+                            <hr>
+                        </form>
                         <% });%>
                     </div>
                 </div>
@@ -34,3 +39,4 @@
         </div>
     </body>
 </html>
+<script text

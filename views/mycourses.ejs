@@ -15,17 +15,22 @@
                 <!-- LOCAL INFORMATION -->
                 <div class="col-sm-6">
                     <div class="well">
-                        <h3><span class="fa fa-user"></span> My Courses <%=message%></h3>
+                        <h3><span class="fa fa-user"></span> My Courses </h3>
                         <% mycourses.forEach(function(mycourse){%>
-                        <p>
-                            <strong>courseName</strong>: <%= JSON.parse(mycourse).courseName %><br>
-                            <strong>professorName</strong>: <%= JSON.parse(mycourse).professorName %><br>
-                            <strong>time</strong>: <%= JSON.parse(mycourse).time %><br>
-                            <strong>room</strong>: <%= JSON.parse(mycourse).room %><br>
-                            <strong>available</strong>: <%= JSON.parse(mycourse).available %><br>
-                            <strong>occupied</strong>: <%= JSON.parse(mycourse).occupied %><br>
-                            <strong>credit</strong>: <%= JSON.parse(mycourse).credit %><br>
-                        </p>
+                        <form  action="/delete" method="post">
+                            <p>
+                                <strong>courseName</strong>: <%= JSON.parse(mycourse).courseName %><br>
+                                <strong>professorName</strong>: <%= JSON.parse(mycourse).professorName %><br>
+                                <strong>time</strong>: <%= JSON.parse(mycourse).time %><br>
+                                <strong>room</strong>: <%= JSON.parse(mycourse).room %><br>
+                                <strong>available</strong>: <%= JSON.parse(mycourse).available %><br>
+                                <strong>occupied</strong>: <%= JSON.parse(mycourse).occupied %><br>
+                                <strong>credit</strong>: <%= JSON.parse(mycourse).credit %><br>
+                            </p>
+                            <input type="hidden" name="courseID" value="<%=JSON.parse(mycourse).courseID%>">
+                            <input type="submit" class="btn btn-warning" name="delete" value="Delete"><br>
+                            <hr>
+                        </form>
                         <% });%>
                     </div>
                 </div>
