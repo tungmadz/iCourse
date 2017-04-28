@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Course List</title>
+        <title>Course Detail</title>
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
         <style>
@@ -16,22 +16,27 @@
                 <br><br>
             </div>
             <div class="row">
-                <h1><center>Course List</center></h1>
+                <h1><center>Course Detail</center></h1>
                 <!-- LOCAL INFORMATION -->
                 <div class="col-sm-6">
                     <div class="well">
-                        <h3><span class="fa fa-user"></span> Courses</h3>
-                        <% courses.forEach(function(course){%>
-                        <form  action="/courses/<%=course.courseID%>" method="get">
+                        <h3><span class="fa fa-user"></span> Course Detail</h3>
+                        <form action="/register" method="post">
                             <p>
                                 <strong>Subject</strong>: <%= course.courseName %><br>
                                 <strong>Professor</strong>: <%= course.professorName %><br>
                                 <strong>Time</strong>: <%= course.time%><br>
+                                <strong>Room</strong>: <%= course.room %><br>
+                                <strong>Available</strong>: <%= course.available%><br>
+                                <strong>Occupied</strong>: <%= course.occupied %><br>
+                                <strong>Credit</strong>: <%= course.credit%><br>
+                                <strong>Fee</strong>: <%= course.fee%><br>
                             </p>
-                            <input type="submit" class="btn btn-info" value="Detail"><br>
+                            <input type="hidden" name="courseID" value="<%=course.courseID%>">
+                            <input type="submit" class="btn btn-success" name="register" value="Register"><br>
                             <hr>
                         </form>
-                        <% });%>
+
                     </div>
                 </div>
             </div>

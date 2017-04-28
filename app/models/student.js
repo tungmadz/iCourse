@@ -7,11 +7,7 @@ var studentSchema = new Schema({
     birthday:String,
     class: String,
     faculty: String,
-    myCourses:[
-        {
-            courseID:String
-        }
-    ]
+    myCourses:[String]
 });
 
 module.exports = mongoose.model('student',studentSchema);
