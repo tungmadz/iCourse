@@ -1,0 +1,6 @@
+{"_id":{"$oid":"58f6e3d5567b186f1eb0ea9b"},"courseID":"100101","courseName":"Java","professorName":"Pham Minh Tuan","time":"2-5, Monday","room":"E205","available":80,"occupied":80,"credit":2,"fee":500000}
+{"_id":{"$oid":"58f6e4837a46c0c83a0e1aea"},"courseID":"100201","courseName":"SQL","professorName":"Nguyen Ngoc Chau","time":"1-3, Monday","room":"E207","available":60,"occupied":41,"credit":2,"fee":500000}
+{"_id":{"$oid":"5904c5c250cedc07d0e3b84f"},"courseID":"100102","courseName":"Java","professorName":"Tran The Vu","time":"7-10, Friday","room":"E208","available":80,"occupied":53,"credit":2,"fee":500000}
+{"_id":{"$oid":"5904c68b50cedc07d0e3b871"},"courseID":"100202","courseName":"SQL","professorName":"Nguyen Van Hieu","time":"7-10, Wednesday","room":"E208","available":60,"occupied":43,"credit":2,"fee":500000}
+{"_id":{"$oid":"5904c73d50cedc07d0e3b88f"},"courseID":"100301","courseName":"PHP","professorName":"Vo Duc Hoang","time":"1-3, Monday","room":"C205","available":60,"occupied":43,"credit":2,"fee":500000}
+{"_id":{"$oid":"5904c77050cedc07d0e3b898"},"courseID":"100302","courseName":"PHP","professorName":"Vo Duc Hoang","time":"7-10, Friday","room":"C205","available":60,"occupied":47,"credit":2,"fee":500000}

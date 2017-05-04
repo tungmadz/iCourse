@@ -1,0 +1,1 @@
+{"_id":{"$oid":"5904c39750cedc07d0e3b7e6"},"facultyID":"102","facultyName":"IT","subjectList":[{"semester":1,"subjects":["1001"]},{"semester":2,"subjects":["1002"]},{"semester":3,"subjects":["1001","1002"]},{"semester":4,"subjects":["1001","1002","1003"]}]}

@@ -1,0 +1,2 @@
+{"_id":{"$oid":"5908d0f5dbb89098a5515ab9"},"studentID":"111","studentName":"Mai Dang Tung","birthday":"14/11/1995","class":"13TCLC","semester":4,"faculty":"IT","myCourses":["100202","100301"]}
+{"_id":{"$oid":"5908d72ddbb89098a5515d32"},"studentID":"123","studentName":"Ngo Thi Trung Hieu","birthday":"14/12/1995","class":"13TCLC","semester":3,"faculty":"IT","myCourses":["100102","100101","100202","100201"]}

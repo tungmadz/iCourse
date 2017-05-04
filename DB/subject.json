@@ -1,0 +1,3 @@
+{"_id":{"$oid":"5904c3f350cedc07d0e3b802"},"subjectID":"1001","subjectName":"Java","courseList":["100101","100102","100103"]}
+{"_id":{"$oid":"5904c49850cedc07d0e3b81a"},"subjectID":"1002","subjectName":"SQL","courseList":["100201","100202","100203"]}
+{"_id":{"$oid":"5904c4da50cedc07d0e3b825"},"subjectID":"1003","subjectName":"PHP","courseList":["100301","100302","100303"]}
