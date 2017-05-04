@@ -3,18 +3,17 @@ var LocalStrategy = require('passport-local').Strategy;
 
 //load up the user model
 var User = require('../app/models/user');
-
+var Student = require('../app/models/student');
 //expose this function to our app using module.exports
 module.exports = function(passport){
 
-    // used to serialize the user for the session
     passport.serializeUser(function(user,done){
-        done(null,user.id);
+        done(null,user.username);
     });
 
     //used to deserialize the user
     passport.deserializeUser(function(id,done){
-        User.findById(id,function(err,user){
+        Student.findOne({'studentID':id},function(err,user){
             done(err,user);
         });
     });

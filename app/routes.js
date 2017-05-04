@@ -2,8 +2,13 @@ module.exports = function(app,passport){
     var Course = require('../app/models/course');
     var User = require('../app/models/user');
     var Student = require('../app/models/student');
-    var courseArr=[];
-
+    var Faculty = require('../app/models/faculty');
+    var Subject = require('../app/models/subject');
+    var Professor = require('../app/models/professor');
+    var myCourseArr=[];
+    var subjectList=[];
+    var courseList=[];
+    var courses=[];
     app.get('/',function(req,res){
         res.render('index.ejs');
     });
@@ -16,23 +21,37 @@ module.exports = function(app,passport){
         res.render('signup.ejs',{ message: req.flash('signupMessage')});
     });
 
-    /*FUNCTION GET MY COURSE
-    id is studentID
-    courseArr is an array to store student'course*/
-    var getData = function(id){
-        courseArr=[];
-        Student.findOne({studentID:id},function(err,student){
+    //Get courses
+    function getCourses(facultyName,semester){
+        subjectList=[];
+        courseList=[];
+        courses=[];
+        Faculty.findOne({facultyName:facultyName},function(err,faculty){
             if(err)
-                res.send(err);
+                console.log(err);
             else {
-                var myCourses =student.myCourses;
-                for(var i in myCourses){
-                    Course.findOne({courseID:myCourses[i]},function(err,course){
+                var subjectList = faculty.subjectList;
+                for(var i=0; i < subjectList.length; i++){
+                    if(subjectList[i].semester==semester){
+                        subjectList=subjectList[i].subjects;
+                    }
+                }
+
+                for(var i=0; i < subjectList.length; i++){
+                    Subject.findOne({subjectID:subjectList[i]},function(err,subject){
                         if(err)
-                            res.send(err);
+                            console.log(err);
                         else {
-                            course=JSON.stringify(course);
-                            courseArr.push(course);
+                             courseList=subject.courseList;
+                            for(var i=0; i < courseList.length; i++){
+                                Course.findOne({courseID:courseList[i]},function(err,course){
+                                    if(err)
+                                        console.log(err);
+                                    if(course){
+                                        courses.push(course);
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -40,19 +59,52 @@ module.exports = function(app,passport){
         });
     }
 
-    //after login redirect to profile page with student info
-    app.get('/profile',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        getData(id);
-        Student.findOne({studentID:id},function(err,student){
-            if(err)
-                res.json(err);
-            else {
-                res.render('profile.ejs',{
-                    student : student
-                });
+    function getMyCourses(student){
+        myCourseArr=[];
+        var myCourses =student.myCourses;
+        for(var i=0; i < myCourses.length; i++){
+            Course.findOne({courseID:myCourses[i]},function(err,course){
+                if(err)
+                    console.log(err);
+                else {
+                    myCourseArr.push(course);
+                }
+            });
+        }
+    }
+
+    function isFull(id){
+        Course.findOne({courseID:id},function(err,course){
+            if(err){
+                return true;
+            }
+            else{
+                if(course.occupied >= course.available)
+                    return true;
+                else
+                    return false;
             }
         });
+    }
+
+    function isEmpty(id){
+        Course.findOne({courseID:id},function(err,course){
+            if(err){
+                return true;
+            }
+            else{
+                if(course.occupied <=0)
+                    return true;
+                else
+                    return false;
+            }
+        });
+    }
+
+    //after login redirect to profile page with student info
+    app.get('/profile',isLoggedIn,function(req,res){
+        var student=req.user;
+        res.json(student);
     });
 
     app.get('/logout',function(req,res){
@@ -67,21 +119,24 @@ module.exports = function(app,passport){
         failureFlash: true
     }));
 
-    app.post('/login',passport.authenticate('local-login',{
-        successRedirect: '/profile',
-        failureRedirect: '/login',
-        failureFlash: true,
-    }));
+    app.post('/login',passport.authenticate('local-login'),function(req,res){
+        var user=req.user;
+        Student.findOne({studentID:user.username},function(err,student){
+            if(err)
+                res.send(err)
+            else {
+                var facultyName=student.faculty;
+                var semester=student.semester;
+                getCourses(facultyName,semester);
+                getMyCourses(student);
+            }
+        });
+        res.json(user);
+    });
 
     //list all courses
     app.get('/courses',isLoggedIn,function(req,res){
-        Course.find({},function(err,courses){
-            if(err)
-                res.send(err);
-            else {
-                res.render('courses.ejs',{courses:courses});
-            }
-        });
+        res.send(courses);
     });
 
     //get course detail
@@ -96,9 +151,35 @@ module.exports = function(app,passport){
         });
     });
 
+    //register course and redirect to mycourses page
+    app.post('/courses/:courseID',isLoggedIn,function(req,res){
+        var student=req.user;
+        var id = student.studentID;
+        var courseID=req.params.courseID;
+        if(isFull(courseID)){
+            res.send("Course is full");
+        }else {
+            Course.update({courseID:courseID},{ $inc: {occupied: 1} },function(err){
+                if(err)
+                    res.send(err);
+                else {
+                    console.log("success");
+                }
+            });
+            Student.update({studentID:id},{ $addToSet: { myCourses:courseID} },function(err){
+                if(err)
+                    res.json({'message':'fail'});
+                else{
+                    getMyCourses(student);
+                    res.json({'message':'success'});
+                }
+            });
+        }
+    });
+
     //list all registered courses of student
     app.get('/mycourses',isLoggedIn,function(req,res){
-        res.render('mycourses.ejs',{mycourses:courseArr});
+        res.json(myCourseArr);
     });
 
     //get registered course detail
@@ -113,36 +194,31 @@ module.exports = function(app,passport){
         });
     });
 
-    //register course and redirect to mycourses page
-    app.post('/register',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        var idCourse=req.body.courseID;
-        Student.update({studentID: id},{ $addToSet: { myCourses:idCourse} },function(err){
-            if(err)
-                res.send(err);
-            else {
-                getData(id);
-                res.redirect('/mycourses');
-            }
-
-        });
-    });
-
     //delete registered course and redirect to mycourses page
-    app.post('/delete',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        var idCourse=req.body.courseID;
-        Student.update({studentID: id},{ $pull: { myCourses: {$in: [idCourse] } } },function(err){
-            if(err)
-                res.send(err);
-            else {
-                getData(id);
-                res.redirect('/mycourses');
-            }
-        });
+    app.post('/mycourses/:courseID',isLoggedIn,function(req,res){
+        var student=req.user;
+        var id = student.studentID;
+        var courseID=req.params.courseID;
+        if(isEmpty(courseID)){
+            res.send("Course is empty");
+        }else {
+            Course.update({courseID:courseID},{ $inc: {occupied: -1} },function(err){
+                if(err)
+                    res.send(err);
+                else {
+                    console.log("success");
+                }
+            });
+            Student.update({studentID: id},{ $pull: { myCourses: {$in: [courseID] } } },function(err){
+                if(err)
+                    res.json({'message':'fail'});
+                else {
+                    getMyCourses(student);
+                    res.json({'message':'success'});
+                }
+            });
+        }
     });
-
-
 };
 
 

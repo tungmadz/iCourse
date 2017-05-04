@@ -21,7 +21,7 @@
                 <div class="col-sm-6">
                     <div class="well">
                         <h3><span class="fa fa-user"></span> My Courses Detail </h3>
-                        <form  action="/delete" method="post">
+                        <form  action="/mycourses/<%=mycourse.courseID%>" method="post">
                             <p>
                                 <strong>Subject</strong>: <%= mycourse.courseName %><br>
                                 <strong>Professor</strong>: <%= mycourse.professorName %><br>
@@ -31,8 +31,8 @@
                                 <strong>Occupied</strong>: <%= mycourse.occupied %><br>
                                 <strong>Credit</strong>: <%= mycourse.credit %><br>
                             </p>
-                            <input type="hidden" name="courseID" value="<%=mycourse.courseID%>">
-                            <input type="submit" class="btn btn-danger" name="delete" value="Delete"><br>
+                            <!-- <input type="hidden" name="courseID" value="<%=mycourse.courseID%>"> -->
+                            <input type="submit" class="btn btn-danger" value="Delete"><br>
                             <hr>
                         </form>
                     </div>

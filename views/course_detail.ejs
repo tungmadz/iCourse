@@ -21,7 +21,7 @@
                 <div class="col-sm-6">
                     <div class="well">
                         <h3><span class="fa fa-user"></span> Course Detail</h3>
-                        <form action="/register" method="post">
+                        <form action="/courses/<%=course.courseID%>" method="post">
                             <p>
                                 <strong>Subject</strong>: <%= course.courseName %><br>
                                 <strong>Professor</strong>: <%= course.professorName %><br>
@@ -32,11 +32,10 @@
                                 <strong>Credit</strong>: <%= course.credit%><br>
                                 <strong>Fee</strong>: <%= course.fee%><br>
                             </p>
-                            <input type="hidden" name="courseID" value="<%=course.courseID%>">
-                            <input type="submit" class="btn btn-success" name="register" value="Register"><br>
+                            <!-- <input type="hidden" name="courseID" value="<%=course.courseID%>"> -->
+                            <input type="submit" class="btn btn-success" value="Register"><br>
                             <hr>
                         </form>
-
                     </div>
                 </div>
             </div>

@@ -21,7 +21,8 @@
                 <div class="col-sm-6">
                     <div class="well">
                         <h3><span class="fa fa-user"></span> Courses</h3>
-                        <% courses.forEach(function(course){%>
+                        <% courses.forEach(function(Course){
+                            var course=JSON.parse(Course);%>
                         <form  action="/courses/<%=course.courseID%>" method="get">
                             <p>
                                 <strong>Subject</strong>: <%= course.courseName %><br>

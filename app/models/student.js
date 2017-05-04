@@ -6,6 +6,7 @@ var studentSchema = new Schema({
     studentName: String,
     birthday:String,
     class: String,
+    semester: Number,
     faculty: String,
     myCourses:[String]
 });
