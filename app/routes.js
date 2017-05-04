@@ -49,7 +49,6 @@ module.exports = function(app,passport){
             else{
                 var facultyName=student.faculty;
                 var semester=student.semester;
-                console.log(semester);
                 getCourses(facultyName,semester);
                 getMyCourses(student);
             }
