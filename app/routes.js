@@ -45,12 +45,11 @@ module.exports = function(app,passport){
         var user=req.user;
         Student.findOne({studentID:user.username},function(err,student){
             if(err)
-                console.log("err");
-            if(!student)
-                console.log("not student");
+                res.send(err);
             else{
                 var facultyName=student.faculty;
                 var semester=student.semester;
+                console.log(semester);
                 getCourses(facultyName,semester);
                 getMyCourses(student);
             }
@@ -67,7 +66,7 @@ module.exports = function(app,passport){
                 console.log(err);
             else {
                 var subjectListOfFaculty = faculty.subjectList;
-                for(var i=0; i < subjectListOfSemester.length; i++){
+                for(var i=0; i < subjectListOfFaculty.length; i++){
                     if(subjectListOfFaculty[i].semester==semester){
                         subjectListOfSemester=subjectListOfFaculty[i].subjects;
                     }
@@ -110,10 +109,7 @@ module.exports = function(app,passport){
     }
     //list all courses
     app.get('/courses',isLoggedIn,function(req,res){
-        Course.find({},function(err,course){
-            res.json(course);
-        })
-        // res.send(courseList);
+         res.json(courseList);
     });
 
     //get course detail

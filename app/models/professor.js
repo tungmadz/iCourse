@@ -8,4 +8,4 @@ var professorSchema = new Schema({
     courseList:[String]
 });
 
-module.exports = mongoose.model('professor',professorSchema);
+module.exports = mongoose.model('Professor',professorSchema);
