@@ -7,11 +7,7 @@ var facultySchema = new Schema({
     subjectList:[
         {
             semester: Number,
-            subjects:[
-                {
-                    subjectID: String
-                }
-            ]
+            subjects:[String]
         }
     ]
 });

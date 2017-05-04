@@ -28,8 +28,8 @@ app.use(bodyParser.json());
 
 app.set('view engine','ejs');
 
-//required for passport
-app.use(session({secret: 'ilovescotchscotchyscotchscotch'}));
+//required for passport ilovescotchscotchyscotchscotch
+app.use(session({secret: 'secret-string'}));
 app.use(passport.initialize());
 app.use(passport.session());    //persistent login session
 app.use(flash());               //use connect-flash for flash messages stored in session

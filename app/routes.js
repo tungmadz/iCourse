@@ -2,7 +2,14 @@ module.exports = function(app,passport){
     var Course = require('../app/models/course');
     var User = require('../app/models/user');
     var Student = require('../app/models/student');
-    var courseArr=[];
+    var Faculty = require('../app/models/faculty');
+    var Subject = require('../app/models/subject');
+    var Professor = require('../app/models/professor');
+
+    var myCourseList=[];
+    var subjectListOfSemester=[];
+    var courseIdListOfSubject=[];
+    var courseList=[];
 
     app.get('/',function(req,res){
         res.render('index.ejs');
@@ -16,43 +23,10 @@ module.exports = function(app,passport){
         res.render('signup.ejs',{ message: req.flash('signupMessage')});
     });
 
-    /*FUNCTION GET MY COURSE
-    id is studentID
-    courseArr is an array to store student'course*/
-    var getData = function(id){
-        courseArr=[];
-        Student.findOne({studentID:id},function(err,student){
-            if(err)
-                res.send(err);
-            else {
-                var myCourses =student.myCourses;
-                for(var i in myCourses){
-                    Course.findOne({courseID:myCourses[i]},function(err,course){
-                        if(err)
-                            res.send(err);
-                        else {
-                            course=JSON.stringify(course);
-                            courseArr.push(course);
-                        }
-                    });
-                }
-            }
-        });
-    }
-
     //after login redirect to profile page with student info
     app.get('/profile',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        getData(id);
-        Student.findOne({studentID:id},function(err,student){
-            if(err)
-                res.json(err);
-            else {
-                res.render('profile.ejs',{
-                    student : student
-                });
-            }
-        });
+        var student=req.user;
+        res.json(student);
     });
 
     app.get('/logout',function(req,res){
@@ -67,84 +41,219 @@ module.exports = function(app,passport){
         failureFlash: true
     }));
 
-    app.post('/login',passport.authenticate('local-login',{
-        successRedirect: '/profile',
-        failureRedirect: '/login',
-        failureFlash: true,
-    }));
-
-    //list all courses
-    app.get('/courses',isLoggedIn,function(req,res){
-        Course.find({},function(err,courses){
+    app.post('/login',passport.authenticate('local-login',{failureRedirect: '/login',failureFlash: true}),function(req,res){
+        var user=req.user;
+        Student.findOne({studentID:user.username},function(err,student){
             if(err)
-                res.send(err);
-            else {
-                res.render('courses.ejs',{courses:courses});
+                console.log("err");
+            if(!student)
+                console.log("not student");
+            else{
+                var facultyName=student.faculty;
+                var semester=student.semester;
+                getCourses(facultyName,semester);
+                getMyCourses(student);
             }
         });
+        res.json(user.username);
+    });
+    //Get courses
+    function getCourses(facultyName,semester){
+        subjectListOfSemester=[];
+        courseIdListOfSubject=[];
+        courseList=[];
+        Faculty.findOne({facultyName:facultyName},function(err,faculty){
+            if(err)
+                console.log(err);
+            else {
+                var subjectListOfFaculty = faculty.subjectList;
+                for(var i=0; i < subjectListOfSemester.length; i++){
+                    if(subjectListOfFaculty[i].semester==semester){
+                        subjectListOfSemester=subjectListOfFaculty[i].subjects;
+                    }
+                }
+                for(var i=0; i < subjectListOfSemester.length; i++){
+                    Subject.findOne({subjectID:subjectListOfSemester[i]},function(err,subject){
+                        if(err)
+                            console.log(err);
+                        else {
+                            courseIdListOfSubject=subject.courseList;
+                            for(var i=0; i < courseIdListOfSubject.length; i++){
+                                Course.findOne({courseID:courseIdListOfSubject[i]},function(err,course){
+                                    if(err)
+                                        console.log(err);
+                                    if(course){
+                                        courseList.push(course);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //Get student courses
+    function getMyCourses(student){
+        myCourseList=[];
+        var myCourses =student.myCourses;
+        for(var i=0; i < myCourses.length; i++){
+            Course.findOne({courseID:myCourses[i]},function(err,course){
+                if(err)
+                    console.log(err);
+                else {
+                    myCourseList.push(course);
+                }
+            });
+        }
+    }
+    //list all courses
+    app.get('/courses',isLoggedIn,function(req,res){
+        Course.find({},function(err,course){
+            res.json(course);
+        })
+        // res.send(courseList);
     });
 
     //get course detail
-    app.get('/courses/:courseID',isLoggedIn,function(req,res){
-        var id= req.params.courseID;
-        Course.findOne({courseID:id},function(err,course){
-            if(err)
-                res.send(err);
-            else {
-                res.render('course_detail.ejs',{course:course});
-            }
-        });
+    // app.get('/courses/:courseID',isLoggedIn,function(req,res){
+    //     var id= req.params.courseID;
+    //     Course.findOne({courseID:id},function(err,course){
+    //         if(err)
+    //             res.send(err);
+    //         else {
+    //             res.render('course_detail.ejs',{course:course});
+    //         }
+    //     });
+    // });
+
+    //register course and redirect to mycourses page
+    app.post('/courses',isLoggedIn,function(req,res){
+        var student=req.user;
+        var id = student.studentID;
+        var courseID=req.body.courseID;
+        if(isRegistered(student.myCourses,courseID)==true){
+            res.json({"message":"You have already registered this course !"});
+        }
+        else {
+            Course.findOne({courseID:courseID},function(err,course){
+                if(err)
+                    res.json({"message":"Error"});
+                if(!course)
+                    res.json({"message":"Course not found !"});
+                if(course){
+                    if(isFull(course.occupied,course.available)){
+                        res.json({"message":"This course is already full"});
+                    }else{
+                        course.occupied=course.occupied+1;
+                        course.save(function(err){
+                            if(err)
+                                res.json({"message":"Error"});
+                            else{
+                                addToMyCourses(student,courseID,res);
+                            }
+                        });
+                    }
+                }
+            });
+        }
     });
 
+    function isFull(occupied,available){
+        if(occupied >= available)
+            return true;
+        else
+            return false;
+    }
+
+    function isRegistered(myCourses,courseID){
+        for(var i in myCourses){
+            if(courseID==myCourses[i])
+                return true;
+        }
+        return false;
+    }
+
+    function addToMyCourses(student,courseID,res){
+        var id = student.studentID;
+        Student.update({studentID:id},{ $push: { myCourses:courseID} },function(err){
+            if(err)
+                res.json({"message":"Error"});
+            else{
+                getMyCourses(student);
+                res.json({"message":"Success"});
+            }
+        });
+    }
     //list all registered courses of student
     app.get('/mycourses',isLoggedIn,function(req,res){
-        res.render('mycourses.ejs',{mycourses:courseArr});
+        res.json(myCourseList);
     });
 
     //get registered course detail
-    app.get('/mycourses/:courseID',isLoggedIn,function(req,res){
-        var id= req.params.courseID;
-        Course.findOne({courseID:id},function(err,mycourse){
-            if(err)
-                res.send(err);
-            else {
-                res.render('mycourse_detail.ejs',{mycourse:mycourse});
-            }
-        });
-    });
-
-    //register course and redirect to mycourses page
-    app.post('/register',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        var idCourse=req.body.courseID;
-        Student.update({studentID: id},{ $addToSet: { myCourses:idCourse} },function(err){
-            if(err)
-                res.send(err);
-            else {
-                getData(id);
-                res.redirect('/mycourses');
-            }
-
-        });
-    });
+    // app.get('/mycourses/:courseID',isLoggedIn,function(req,res){
+    //     var id= req.params.courseID;
+    //     Course.findOne({courseID:id},function(err,mycourse){
+    //         if(err)
+    //             res.send(err);
+    //         else {
+    //             res.render('mycourse_detail.ejs',{mycourse:mycourse});
+    //         }
+    //     });
+    // });
 
     //delete registered course and redirect to mycourses page
-    app.post('/delete',isLoggedIn,function(req,res){
-        var id = req.user.username;
-        var idCourse=req.body.courseID;
-        Student.update({studentID: id},{ $pull: { myCourses: {$in: [idCourse] } } },function(err){
-            if(err)
-                res.send(err);
-            else {
-                getData(id);
-                res.redirect('/mycourses');
-            }
-        });
+    app.post('/mycourses',isLoggedIn,function(req,res){
+        var student=req.user;
+        var id = student.studentID;
+        var courseID=req.body.courseID;
+        if(isRegistered(student.myCourses,courseID)==true){
+            Course.findOne({courseID:courseID},function(err,course){
+                if(err)
+                    res.json({"message":"Error"});
+                if(!course)
+                    res.json({"message":"Course not found"});
+                if(course){
+                    if(isEmpty(course.occupied))
+                        res.json({"message":"This course is already empty"});
+                    else {
+                        course.occupied=course.occupied-1;
+                        course.save(function(err){
+                            if(err)
+                                res.json({"message":"Error"});
+                            else {
+                                removeFromMyCourses(student,courseID,res);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            res.json({"message":"You didn't register this course"});
+        }
     });
 
+    function removeFromMyCourses(student,courseID,res){
+        var id = student.studentID;
+        Student.update({studentID: id},{ $pull: { myCourses: {$in: [courseID] } } },function(err){
+            if(err)
+                res.json({"message":"Fail"});
+            else {
+                getMyCourses(student);
+                res.json({"message":"Success"});
+            }
+        });
+    }
 
-};
-
+    function isEmpty(occupied){
+        if(occupied <=0)
+            return true;
+        else
+            return false;
+    }
+}
 
 //route middleware to make sure a user is logged in
 function isLoggedIn(req,res,next){

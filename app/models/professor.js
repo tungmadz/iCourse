@@ -5,11 +5,7 @@ var professorSchema = new Schema({
     professorID: String,
     professorName: String,
     facultyID: String,
-    courseList:[
-        {
-            courseID:String
-        }
-    ]
+    courseList:[String]
 });
 
 module.exports = mongoose.model('professor',professorSchema);
